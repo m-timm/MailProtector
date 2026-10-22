@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Report Missed Spam</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      margin: 0; padding: 20px;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      font-size: 14px; line-height: 1.45;
+      background: Canvas; color: CanvasText;
+      display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box;
+    }
+    h1 { font-size: 16px; margin: 0 0 12px; }
+    p  { margin: 0 0 16px; }
+    .spacer { flex: 1; }
+    .buttons { display: flex; gap: 8px; justify-content: flex-end; }
+    button {
+      min-width: 84px; padding: 7px 16px; font: inherit; cursor: pointer;
+      border: 1px solid #8a8886; border-radius: 4px; background: ButtonFace; color: ButtonText;
+    }
+    button.primary { background: #0f6cbd; border-color: #0f6cbd; color: #fff; }
+    button:focus-visible { outline: 2px solid #0f6cbd; outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <h1 id="title"></h1>
+  <p id="text"></p>
+  <div class="spacer"></div>
+  <div class="buttons" id="buttons"></div>
+  <script src="config.js"></script>
+  <script src="dialog.js"></script>
+</body>
+</html>

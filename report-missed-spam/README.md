@@ -1,0 +1,85 @@
+# Report Missed Spam (Outlook add-in)
+
+One ribbon button on any opened message. Click it and:
+
+1. A dialog asks **"Did you release this message from your quarantine?"**
+   - **Yes**: shows "Mailprotector already quarantined this message... Please block the sender in your
+     digest report." with a Close button. Nothing is reported.
+   - **No**: a new compose window opens, addressed to `Spam@emailservice.io`, with the original message
+     **attached as an item** (not forwarded) and a customizable body. The user reviews and clicks Send.
+2. Closing the dialog with the X also reports nothing.
+
+Function command only, no task pane, `ReadItem` permission, Mailbox 1.9 requirement set.
+
+## Layout
+
+| Path | Purpose |
+|---|---|
+| `web/config.js` | **Edit this**: recipient, subject, email body, and all dialog wording |
+| `web/commands.js` | Button logic (dialog, then compose) |
+| `web/commands.html` | Loads Office.js, config.js, commands.js |
+| `web/dialog.html`, `web/dialog.js` | The quarantine question dialog |
+| `web/assets/` | Ribbon icons (from your PSD) |
+| `manifest.template.xml` | Manifest; `{{BASE_URL}}` is filled in by the script |
+| `Deploy-AddIn.ps1` | Builds `dist/manifest.xml`, optionally installs per tenant |
+
+## 1. Host the `web/` folder over HTTPS
+
+Any static host works (Azure Static Web Apps, GitHub Pages, Cloudflare Pages, an existing web server).
+Serve `web/` at the root so `https://<host>/commands.html` and `https://<host>/assets/icon-32.png` resolve.
+One host serves every client tenant.
+
+## 2. Build the manifest
+
+```powershell
+.\Deploy-AddIn.ps1 -BaseUrl https://spamreport.example.com -ManifestOnly
+```
+
+Writes `dist\manifest.xml`.
+
+## 3. Deploy
+
+**Admin center (known-good path):** Settings > Integrated apps > Upload custom apps > Office Add-in >
+upload `dist\manifest.xml` > Everyone (or a group) > Deploy. Allow up to 12 hours for it to appear
+in all clients.
+
+**Scripted across tenants (untested, try one tenant first):**
+
+```powershell
+.\Deploy-AddIn.ps1 -BaseUrl https://spamreport.example.com `
+    -UserPrincipalName you@yourmsp.com `
+    -TenantDomains contoso.onmicrosoft.com, fabrikam.onmicrosoft.com
+```
+
+Uses Exchange Online PowerShell over GDAP (`New-App -OrganizationApp`). Needs an Exchange-capable
+GDAP role. I did not find a native add-in deployment in CIPP's docs, so this is the scripted fallback.
+
+## Customizing the message
+
+Edit `web/config.js` and re-host the folder. No manifest change or tenant redeploy is needed.
+Email tokens: `{reporter}`, `{sender}`, `{subject}`, `{date}`. Body is HTML (32 KB max); token values
+are escaped. Dialog text is plain text. Set `quarantinePrompt.enabled` to `false` to skip the dialog
+and go straight to compose.
+
+## Test checklist (do this before rolling out)
+
+1. Classic Outlook (Windows): open a message, button appears on the ribbon, compose opens with the
+   message attached as an item.
+2. New Outlook (Windows) and Outlook on the web: same checks.
+3. Send one to the mailbox and confirm the vendor's pipeline accepts it as a valid sample (attached
+   item, not forwarded). Ask them whether they need `.eml` specifically; an item attachment is
+   delivered as an attached message, which may or may not satisfy their intake.
+4. Dialog: Yes shows the quarantine message and reports nothing; No opens compose; the X reports
+   nothing. In Outlook on the web, the first dialog may show a browser pop-up/allow prompt.
+5. Check the button also shows when a message is opened in its own window, and for shared mailboxes.
+
+## Known limits
+
+- If the dialog can't open for some reason, the add-in skips it and opens compose (fail open) so the
+  button never goes dead. The dialog is a reminder, not enforcement; a user can still choose No.
+- Not verified: how each Outlook client handles a dialog launched from a ribbon function command
+  (Microsoft documents dialogs from add-in commands but not this exact timing). Test all three clients.
+- Two clicks: Send is the user's click. Fully silent sending would need Graph + a multi-tenant app.
+- Item attachments need the message's EWS ID; a few contexts (some shared/delegate scenarios) don't
+  provide one. The add-in shows an error notification instead of opening an empty compose window.
+- Mobile Outlook is not configured (desktop form factor only).
