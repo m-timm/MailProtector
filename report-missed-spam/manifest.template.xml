@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Report Missed Spam - Outlook add-in (XML manifest, function command, no task pane).
-  {{BASE_URL}} is replaced by Deploy-AddIn.ps1 with the HTTPS location hosting /web.
-  To ship a change to the hosted files only (body text etc.) you do NOT need to bump anything.
-  To ship a manifest change, bump <Version> and re-deploy.
+  Placeholders in double curly braces (BASE_URL, BASE_ORIGIN) are filled in by Deploy-AddIn.ps1.
+  Hosted-file changes (wording etc.) need no manifest change. For a manifest change, bump Version.
 -->
 <OfficeApp
   xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
@@ -23,7 +22,7 @@
   <SupportUrl DefaultValue="{{BASE_URL}}/commands.html"/>
 
   <AppDomains>
-    <AppDomain>{{BASE_URL}}</AppDomain>
+    <AppDomain>{{BASE_ORIGIN}}</AppDomain>
   </AppDomains>
 
   <Hosts>
