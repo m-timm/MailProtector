@@ -11,7 +11,6 @@
  */
 const CONFIG = {
   reportTo: "Spam@emailservice.io",
-  reportCc: ["trhelpdesk@trcomputersales.com"],
 
   subjectTemplate: "Missed spam report: {subject}",
 
