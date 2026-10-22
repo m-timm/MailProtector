@@ -115,6 +115,7 @@ function openCompose(item, event) {
     Office.context.mailbox.displayNewMessageFormAsync(
       {
         toRecipients: [CONFIG.reportTo],
+        ccRecipients: CONFIG.reportCc || [],
         subject: truncate(fillTemplate(CONFIG.subjectTemplate, values, false), 255),
         htmlBody: fillTemplate(CONFIG.bodyTemplate, values, true),
         attachments: [
