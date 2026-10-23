@@ -13,7 +13,7 @@
   xsi:type="MailApp">
 
   <Id>789bdf63-abf8-4608-901f-033c627cd0a2</Id>
-  <Version>1.0.0.1</Version>
+  <Version>1.0.0.2</Version>
   <ProviderName>TR Computer Sales</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Report Missed Spam"/>
