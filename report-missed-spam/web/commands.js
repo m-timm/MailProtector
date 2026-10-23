@@ -11,6 +11,7 @@
  */
 
 const NOTIFY_ID = "reportMissedSpam";
+const BUILD = "2026-10-23.1"; // shown in debug traces so you can tell which copy of this file Outlook is running
 const MAX_SUBJECT = 200;
 const DIALOG_OPEN_TIMEOUT_MS = 15000; // how long to wait for the dialog to open before giving up
 
@@ -46,18 +47,40 @@ function notify(item, type, message) {
   }
 }
 
+// Debug trace: when CONFIG.debug is true, shows each step as a small notification on the message
+// (max 5 per message, so keys are reused). Lets us see where the flow stops without dev tools.
+function trace(item, key, text) {
+  if (!CONFIG.debug) return;
+  try {
+    item.notificationMessages.replaceAsync("rms_" + key, {
+      type: "informationalMessage",
+      message: ("RMS " + BUILD + ": " + text).slice(0, 150),
+      icon: "Icon.16",
+      persistent: false,
+    });
+  } catch (e) {
+    /* traces are best effort */
+  }
+}
+
+function describe(result) {
+  const err = result && result.error ? " " + result.error.code + " " + result.error.message : "";
+  return String(result && result.status) + err;
+}
+
 /*
  * Shows dialog.html and calls done(true) to continue or done(false) to stop.
  * If the dialog can't be opened we continue (fail open) so the button never goes dead.
  * Closing the dialog with the X stops without reporting.
  */
-function askQuarantine(done) {
+function askQuarantine(item, done) {
   let finished = false;
   let openTimer = null;
   function finish(proceed) {
     if (finished) return;
     finished = true;
     if (openTimer) clearTimeout(openTimer);
+    trace(item, "cb", "dialog finished, continue=" + proceed);
     done(proceed);
   }
 
@@ -69,6 +92,7 @@ function askQuarantine(done) {
     // If the dialog never reports back (blocked, or the host swallowed the call), don't leave the
     // "working on your request" banner hanging: continue to compose. Cleared as soon as it answers.
     openTimer = setTimeout(function () {
+      trace(item, "dlg", "dialog gave no answer in " + DIALOG_OPEN_TIMEOUT_MS / 1000 + "s");
       finish(true);
     }, DIALOG_OPEN_TIMEOUT_MS);
 
@@ -77,6 +101,7 @@ function askQuarantine(done) {
       { height: 32, width: 28, displayInIframe: false },
       function (result) {
         if (openTimer) clearTimeout(openTimer);
+        trace(item, "dlg", "dialog open result: " + describe(result));
         if (result.status !== Office.AsyncResultStatus.Succeeded) {
           finish(true);
           return;
@@ -106,6 +131,7 @@ function askQuarantine(done) {
     );
   } catch (e) {
     // Anything unexpected while setting up the dialog: fail open so the button still works.
+    trace(item, "dlg", "dialog setup threw: " + (e && e.message));
     finish(true);
   }
 }
@@ -130,6 +156,7 @@ function openCompose(item, event) {
 
     const attachmentName = truncate(originalSubject.replace(/[\\/:*?"<>|\r\n]+/g, "-"), MAX_SUBJECT);
 
+    trace(item, "compose", "opening compose window");
     Office.context.mailbox.displayNewMessageFormAsync(
       {
         toRecipients: [CONFIG.reportTo],
@@ -145,6 +172,7 @@ function openCompose(item, event) {
         ],
       },
       function (result) {
+        trace(item, "compose", "compose result: " + describe(result));
         if (result.status !== Office.AsyncResultStatus.Succeeded) {
           notify(item, "errorMessage", "Couldn't open the report message. Please try again.");
         }
@@ -152,6 +180,7 @@ function openCompose(item, event) {
       }
     );
   } catch (e) {
+    trace(item, "compose", "compose setup threw: " + (e && e.message));
     notify(item, "errorMessage", "Couldn't open the report message. Please try again.");
     event.completed();
   }
@@ -159,6 +188,7 @@ function openCompose(item, event) {
 
 function reportMissedSpam(event) {
   const item = Office.context.mailbox.item;
+  trace(item, "start", "button handler started");
 
   if (!item || !item.itemId) {
     notify(
@@ -177,7 +207,8 @@ function reportMissedSpam(event) {
   }
 
   // event.completed() is held until the whole flow ends so the runtime stays alive for the dialog.
-  askQuarantine(function (proceed) {
+  trace(item, "dlg", "opening quarantine dialog");
+  askQuarantine(item, function (proceed) {
     if (proceed) {
       openCompose(item, event);
     } else {
