@@ -40,7 +40,7 @@ Writes `dist\manifest.xml`.
 ## 3. Deploy
 
 **Admin center (known-good path):** Settings > Integrated apps > Upload custom apps > Office Add-in >
-upload `dist\manifest.xml` > Everyone (or a group) > Deploy. Allow up to 12 hours for it to appear
+upload `dist\manifest.xml` > Everyone (or a group) > Deploy. Microsoft says it can take up to 24 hours for it to appear
 in all clients.
 
 **Scripted across tenants (untested, try one tenant first):**
@@ -53,6 +53,18 @@ in all clients.
 
 Uses Exchange Online PowerShell over GDAP (`New-App -OrganizationApp`). Needs an Exchange-capable
 GDAP role. I did not find a native add-in deployment in CIPP's docs, so this is the scripted fallback.
+
+## Updating an already-deployed add-in
+
+- **Hosted files only** (`config.js`, `commands.js`, `dialog.*`, icons): update the repo/host. No tenant action.
+  Outlook may cache the old files; to force a refresh, do a manifest update as below.
+- **Manifest changes, or to force clients to refetch:** raise `<Version>` in `manifest.template.xml`
+  (and `manifest.xml`), keep `<Id>` unchanged, and update the existing add-in in
+  Integrated apps by uploading the new manifest. Don't remove and re-add it; that drops the
+  deployment and its assignments. `Deploy-AddIn.ps1` appends the version to the page URL as `?v=`,
+  and the pages forward it to `config.js`, `commands.js` and the dialog, so a version bump
+  refreshes all of them. If you edit `manifest.xml` by hand, keep the two `?v=` values equal to `<Version>`.
+- Only the admin who deployed the add-in, or a Global Admin, can update or remove it.
 
 ## Customizing the message
 

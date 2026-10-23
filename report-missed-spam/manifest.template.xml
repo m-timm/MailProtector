@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Report Missed Spam - Outlook add-in (XML manifest, function command, no task pane).
-  {{BASE_URL}} is replaced by Deploy-AddIn.ps1 with the HTTPS location hosting /web.
-  To ship a change to the hosted files only (body text etc.) you do NOT need to bump anything.
-  To ship a manifest change, bump <Version> and re-deploy.
+  Placeholders in double curly braces (BASE_URL, BASE_ORIGIN, VERSION) are filled in by Deploy-AddIn.ps1.
+  VERSION is read from the Version element below and is appended to the page URL as ?v= so a version bump forces a refetch.
+  Hosted-file changes (wording etc.) need no manifest change. For a manifest change, bump Version.
 -->
 <OfficeApp
   xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
@@ -13,7 +13,7 @@
   xsi:type="MailApp">
 
   <Id>789bdf63-abf8-4608-901f-033c627cd0a2</Id>
-  <Version>1.0.0.0</Version>
+  <Version>1.0.0.1</Version>
   <ProviderName>TR Computer Sales</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Report Missed Spam"/>
@@ -23,7 +23,7 @@
   <SupportUrl DefaultValue="{{BASE_URL}}/commands.html"/>
 
   <AppDomains>
-    <AppDomain>{{BASE_URL}}</AppDomain>
+    <AppDomain>{{BASE_ORIGIN}}</AppDomain>
   </AppDomains>
 
   <Hosts>
@@ -39,7 +39,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="{{BASE_URL}}/commands.html"/>
+        <SourceLocation DefaultValue="{{BASE_URL}}/commands.html?v={{VERSION}}"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -97,7 +97,7 @@
         <bt:Image id="Icon.80" DefaultValue="{{BASE_URL}}/assets/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Commands.Url" DefaultValue="{{BASE_URL}}/commands.html"/>
+        <bt:Url id="Commands.Url" DefaultValue="{{BASE_URL}}/commands.html?v={{VERSION}}"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="Group.Label" DefaultValue="Email Security"/>

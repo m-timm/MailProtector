@@ -12,6 +12,9 @@
 const CONFIG = {
   reportTo: "Spam@emailservice.io",
 
+  // CC list. Add more addresses to the array, or use [] for no CC.
+  reportCc: ["trhelpdesk@trcomputersales.com"],
+
   subjectTemplate: "Missed spam report: {subject}",
 
   // Body is HTML, max 32 KB.

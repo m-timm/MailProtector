@@ -31,7 +31,16 @@
   <p id="text"></p>
   <div class="spacer"></div>
   <div class="buttons" id="buttons"></div>
-  <script src="config.js"></script>
-  <script src="dialog.js"></script>
+  <script>
+    // Forward ?v=<version> from this page's URL to the scripts so a manifest version bump
+    // also refreshes config.js and the code, not just this HTML page. (ES5 on purpose.)
+    (function (files) {
+      var m = /[?&]v=([^&]+)/.exec(window.location.search);
+      var q = m ? "?v=" + m[1] : "";
+      for (var i = 0; i < files.length; i++) {
+        document.write('<script src="' + files[i] + q + '"><\/script>');
+      }
+    })(["config.js", "dialog.js"]);
+  </script>
 </body>
 </html>

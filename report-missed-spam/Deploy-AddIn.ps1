@@ -44,7 +44,10 @@ $addInName = 'Report Missed Spam'
 # --- Build manifest -----------------------------------------------------------
 $BaseUrl = $BaseUrl.TrimEnd('/')
 New-Item -ItemType Directory -Path $distDir -Force | Out-Null
-(Get-Content -Raw -Path $template).Replace('{{BASE_URL}}', $BaseUrl) |
+$BaseOrigin = ([System.Uri]$BaseUrl).GetLeftPart([System.UriPartial]::Authority)
+$raw     = Get-Content -Raw -Path $template
+$version = [regex]::Match($raw, '<Version>([^<]+)</Version>').Groups[1].Value
+$raw.Replace('{{BASE_URL}}', $BaseUrl).Replace('{{BASE_ORIGIN}}', $BaseOrigin).Replace('{{VERSION}}', $version) |
   Set-Content -Path $manifest -Encoding UTF8
 [xml]$null = Get-Content -Raw -Path $manifest   # throws if not well-formed
 Write-Host "Manifest written: $manifest" -ForegroundColor Green
