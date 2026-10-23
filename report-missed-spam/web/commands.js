@@ -12,6 +12,7 @@
 
 const NOTIFY_ID = "reportMissedSpam";
 const MAX_SUBJECT = 200;
+const DIALOG_OPEN_TIMEOUT_MS = 15000; // how long to wait for the dialog to open before giving up
 
 function escapeHtml(value) {
   return String(value)
@@ -52,44 +53,61 @@ function notify(item, type, message) {
  */
 function askQuarantine(done) {
   let finished = false;
+  let openTimer = null;
   function finish(proceed) {
     if (finished) return;
     finished = true;
+    if (openTimer) clearTimeout(openTimer);
     done(proceed);
   }
 
-  const url = new URL("dialog.html", window.location.href).toString();
-  Office.context.ui.displayDialogAsync(
-    url,
-    { height: 32, width: 28, displayInIframe: false },
-    function (result) {
-      if (result.status !== Office.AsyncResultStatus.Succeeded) {
-        finish(true);
-        return;
+  try {
+    const dialogUrl = new URL("dialog.html", window.location.href);
+    dialogUrl.search = window.location.search || ""; // carries ?v=<version> so the dialog refreshes too
+    const url = dialogUrl.toString();
+
+    // If the dialog never reports back (blocked, or the host swallowed the call), don't leave the
+    // "working on your request" banner hanging: continue to compose. Cleared as soon as it answers.
+    openTimer = setTimeout(function () {
+      finish(true);
+    }, DIALOG_OPEN_TIMEOUT_MS);
+
+    Office.context.ui.displayDialogAsync(
+      url,
+      { height: 32, width: 28, displayInIframe: false },
+      function (result) {
+        if (openTimer) clearTimeout(openTimer);
+        if (result.status !== Office.AsyncResultStatus.Succeeded) {
+          finish(true);
+          return;
+        }
+        const dialog = result.value;
+
+        dialog.addEventHandler(Office.EventType.DialogMessageReceived, function (arg) {
+          let action = "close";
+          try {
+            action = JSON.parse(arg.message).action;
+          } catch (e) {
+            /* treat unreadable messages as close */
+          }
+          try {
+            dialog.close();
+          } catch (e) {
+            /* already closed */
+          }
+          finish(action === "continue");
+        });
+
+        // User closed the dialog with the X (or it errored): do not report.
+        dialog.addEventHandler(Office.EventType.DialogEventReceived, function () {
+          finish(false);
+        });
       }
-      const dialog = result.value;
-
-      dialog.addEventHandler(Office.EventType.DialogMessageReceived, function (arg) {
-        let action = "close";
-        try {
-          action = JSON.parse(arg.message).action;
-        } catch (e) {
-          /* treat unreadable messages as close */
-        }
-        try {
-          dialog.close();
-        } catch (e) {
-          /* already closed */
-        }
-        finish(action === "continue");
-      });
-
-      // User closed the dialog with the X (or it errored): do not report.
-      dialog.addEventHandler(Office.EventType.DialogEventReceived, function () {
-        finish(false);
-      });
-    }
-  );
+    );
+  } catch (e) {
+    // Anything unexpected while setting up the dialog: fail open so the button still works.
+    finish(true);
+  }
 }
 
 function openCompose(item, event) {
@@ -115,6 +133,7 @@ function openCompose(item, event) {
     Office.context.mailbox.displayNewMessageFormAsync(
       {
         toRecipients: [CONFIG.reportTo],
+        ccRecipients: CONFIG.reportCc || [],
         subject: truncate(fillTemplate(CONFIG.subjectTemplate, values, false), 255),
         htmlBody: fillTemplate(CONFIG.bodyTemplate, values, true),
         attachments: [
