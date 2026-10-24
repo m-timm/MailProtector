@@ -13,14 +13,14 @@
   xsi:type="MailApp">
 
   <Id>789bdf63-abf8-4608-901f-033c627cd0a2</Id>
-  <Version>1.0.0.2</Version>
+  <Version>1.0.0.3</Version>
   <ProviderName>TR Computer Sales</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Report Missed Spam"/>
   <Description DefaultValue="Reports a spam message that reached your inbox by attaching it to a new message addressed to the email security team."/>
   <IconUrl DefaultValue="{{BASE_URL}}/assets/icon-64.png"/>
   <HighResolutionIconUrl DefaultValue="{{BASE_URL}}/assets/icon-128.png"/>
-  <SupportUrl DefaultValue="{{BASE_URL}}/commands.html"/>
+  <SupportUrl DefaultValue="{{BASE_URL}}/cmd3.html"/>
 
   <AppDomains>
     <AppDomain>{{BASE_ORIGIN}}</AppDomain>
@@ -39,7 +39,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="{{BASE_URL}}/commands.html?v={{VERSION}}"/>
+        <SourceLocation DefaultValue="{{BASE_URL}}/cmd3.html?v={{VERSION}}"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -97,7 +97,7 @@
         <bt:Image id="Icon.80" DefaultValue="{{BASE_URL}}/assets/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Commands.Url" DefaultValue="{{BASE_URL}}/commands.html?v={{VERSION}}"/>
+        <bt:Url id="Commands.Url" DefaultValue="{{BASE_URL}}/cmd3.html?v={{VERSION}}"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="Group.Label" DefaultValue="Email Security"/>

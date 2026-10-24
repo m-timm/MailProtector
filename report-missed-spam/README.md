@@ -17,7 +17,8 @@ Function command only, no task pane, `ReadItem` permission, Mailbox 1.9 requirem
 |---|---|
 | `web/config.js` | **Edit this**: recipient, subject, email body, and all dialog wording |
 | `web/commands.js` | Button logic (dialog, then compose) |
-| `web/commands.html` | Loads Office.js, config.js, commands.js |
+| `web/cmd3.html` | Page the manifest points at; loads Office.js, config.js, commands.js |
+| `web/commands.html` | Same page, kept so older manifests (1.0.0.1/.2) still work |
 | `web/dialog.html`, `web/dialog.js` | The quarantine question dialog |
 | `web/assets/` | Ribbon icons (from your PSD) |
 | `manifest.template.xml` | Manifest; `{{BASE_URL}}` is filled in by the script |
@@ -26,7 +27,7 @@ Function command only, no task pane, `ReadItem` permission, Mailbox 1.9 requirem
 ## 1. Host the `web/` folder over HTTPS
 
 Any static host works (Azure Static Web Apps, GitHub Pages, Cloudflare Pages, an existing web server).
-Serve `web/` at the root so `https://<host>/commands.html` and `https://<host>/assets/icon-32.png` resolve.
+Serve `web/` at the root so `https://<host>/cmd3.html` and `https://<host>/assets/icon-32.png` resolve.
 One host serves every client tenant.
 
 ## 2. Build the manifest

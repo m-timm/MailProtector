@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Report Missed Spam</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+</head>
+<body>
+  <script>
+    // Forward ?v=<version> from this page's URL to the scripts so a manifest version bump
+    // also refreshes config.js and the code, not just this HTML page. (ES5 on purpose.)
+    (function (files) {
+      var m = /[?&]v=([^&]+)/.exec(window.location.search);
+      var q = m ? "?v=" + m[1] : "";
+      for (var i = 0; i < files.length; i++) {
+        document.write('<script src="' + files[i] + q + '"><\/script>');
+      }
+    })(["config.js", "commands.js"]);
+  </script>
+</body>
+</html>

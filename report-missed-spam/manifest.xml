@@ -8,14 +8,14 @@
   xsi:type="MailApp">
 
   <Id>789bdf63-abf8-4608-901f-033c627cd0a2</Id>
-  <Version>1.0.0.2</Version>
+  <Version>1.0.0.3</Version>
   <ProviderName>TR Computer Sales</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Report Missed Spam"/>
   <Description DefaultValue="Reports a spam message that reached your inbox by attaching it to a new message addressed to the email security team."/>
   <IconUrl DefaultValue="https://m-timm.github.io/MailProtector/report-missed-spam/web/assets/icon-64.png"/>
   <HighResolutionIconUrl DefaultValue="https://m-timm.github.io/MailProtector/report-missed-spam/web/assets/icon-128.png"/>
-  <SupportUrl DefaultValue="https://m-timm.github.io/MailProtector/report-missed-spam/web/commands.html"/>
+  <SupportUrl DefaultValue="https://m-timm.github.io/MailProtector/report-missed-spam/web/cmd3.html"/>
 
   <AppDomains>
     <AppDomain>https://m-timm.github.io</AppDomain>
@@ -34,7 +34,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://m-timm.github.io/MailProtector/report-missed-spam/web/commands.html?v=1.0.0.2"/>
+        <SourceLocation DefaultValue="https://m-timm.github.io/MailProtector/report-missed-spam/web/cmd3.html?v=1.0.0.3"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -92,7 +92,7 @@
         <bt:Image id="Icon.80" DefaultValue="https://m-timm.github.io/MailProtector/report-missed-spam/web/assets/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Commands.Url" DefaultValue="https://m-timm.github.io/MailProtector/report-missed-spam/web/commands.html?v=1.0.0.2"/>
+        <bt:Url id="Commands.Url" DefaultValue="https://m-timm.github.io/MailProtector/report-missed-spam/web/cmd3.html?v=1.0.0.3"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="Group.Label" DefaultValue="Email Security"/>
