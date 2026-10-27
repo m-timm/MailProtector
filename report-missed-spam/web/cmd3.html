@@ -7,6 +7,9 @@
 </head>
 <body>
   <script>
+    // Outlook requires the page to call Office.onReady (or set Office.initialize); without it the
+    // runtime throws "Office.js has not fully loaded" and the button handler never runs.
+    if (window.Office && Office.onReady) { Office.onReady(function () {}); }
     // Forward ?v=<version> from this page's URL to the scripts so a manifest version bump
     // also refreshes config.js and the code, not just this HTML page. (ES5 on purpose.)
     (function (files) {

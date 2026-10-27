@@ -11,7 +11,7 @@
  */
 
 const NOTIFY_ID = "reportMissedSpam";
-const BUILD = "2026-10-24.1"; // shown in debug traces so you can tell which copy of this file Outlook is running
+const BUILD = "2026-10-27.1"; // shown in debug traces so you can tell which copy of this file Outlook is running
 const MAX_SUBJECT = 200;
 const DIALOG_OPEN_TIMEOUT_MS = 15000; // how long to wait for the dialog to open before giving up
 
@@ -218,4 +218,5 @@ function reportMissedSpam(event) {
 }
 
 // Must be registered globally so the manifest's FunctionName can find it.
+Office.onReady(function () {});
 Office.actions.associate("reportMissedSpam", reportMissedSpam);
