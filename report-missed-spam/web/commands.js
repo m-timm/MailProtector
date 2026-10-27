@@ -11,7 +11,7 @@
  */
 
 const NOTIFY_ID = "reportMissedSpam";
-const BUILD = "2026-10-27.2"; // shown in debug traces so you can tell which copy of this file Outlook is running
+const BUILD = "2026-10-27.3"; // shown in debug traces so you can tell which copy of this file Outlook is running
 const MAX_SUBJECT = 200;
 const DIALOG_OPEN_TIMEOUT_MS = 15000; // how long to wait for the dialog to open before giving up
 
@@ -89,11 +89,13 @@ function askQuarantine(item, done) {
     dialogUrl.search = window.location.search || ""; // carries ?v=<version> so the dialog refreshes too
     const url = dialogUrl.toString();
 
-    // If the dialog never reports back (blocked, or the host swallowed the call), don't leave the
-    // "working on your request" banner hanging: continue to compose. Cleared as soon as it answers.
+    // No response = no report. If the dialog never opens (e.g. the user ignores or closes the host's
+    // "wants to display a new window" prompt), stop instead of continuing, so the question can't be
+    // skipped, and don't leave the "working on your request" banner hanging. Cleared once it opens.
     openTimer = setTimeout(function () {
       trace(item, "dlg", "dialog gave no answer in " + DIALOG_OPEN_TIMEOUT_MS / 1000 + "s");
-      finish(true);
+      notify(item, "informationalMessage", "Report cancelled because the question wasn't answered. Click Report Missed Spam to try again.");
+      finish(false);
     }, DIALOG_OPEN_TIMEOUT_MS);
 
     Office.context.ui.displayDialogAsync(

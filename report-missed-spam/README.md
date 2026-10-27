@@ -88,8 +88,8 @@ and go straight to compose.
 
 ## Known limits
 
-- If the dialog can't open for some reason, the add-in skips it and opens compose (fail open) so the
-  button never goes dead. The dialog is a reminder, not enforcement; a user can still choose No.
+- If the dialog never opens within 15 seconds (for example the user ignores the "wants to display a new
+  window" prompt), the report is cancelled with a notice and compose does not open. Errors opening the dialog still fall through to compose.
 - Not verified: how each Outlook client handles a dialog launched from a ribbon function command
   (Microsoft documents dialogs from add-in commands but not this exact timing). Test all three clients.
 - Two clicks: Send is the user's click. Fully silent sending would need Graph + a multi-tenant app.
