@@ -30,7 +30,7 @@ const CONFIG = {
 
   // Troubleshooting: true shows small step-by-step notifications on the message (and the build id of
   // commands.js). Leave false for normal use.
-  debug: true, // TEMPORARY while troubleshooting; set back to false afterwards
+  debug: false,
 
   // Question shown before the compose window opens. Set enabled:false to skip it.
   // Plain text only.
