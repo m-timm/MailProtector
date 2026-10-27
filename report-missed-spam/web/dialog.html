@@ -14,7 +14,9 @@
       background: Canvas; color: CanvasText;
       display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box;
     }
-    h1 { font-size: 16px; margin: 0 0 12px; }
+    .head { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; }
+    .head img { width: 32px; height: 32px; flex: none; }
+    h1 { font-size: 16px; margin: 0; }
     p  { margin: 0 0 16px; }
     .spacer { flex: 1; }
     .buttons { display: flex; gap: 8px; justify-content: flex-end; }
@@ -27,7 +29,7 @@
   </style>
 </head>
 <body>
-  <h1 id="title"></h1>
+  <div class="head"><img src="assets/icon-64.png" alt=""><h1 id="title"></h1></div>
   <p id="text"></p>
   <div class="spacer"></div>
   <div class="buttons" id="buttons"></div>
