@@ -17,6 +17,11 @@
 
 ---
 
+> **Independent project.** Report Missed Spam was designed and built by TR Computer Sales as a convenience for
+> our own clients. It is **unofficial** and is **not affiliated with, endorsed by, or supported by
+> Mailprotector**. Mailprotector's names and services are referenced only to describe where reports are sent.
+> Questions or problems with this add-in belong with TR Computer Sales, not Mailprotector support.
+
 One ribbon button on any opened message. Click it and:
 
 1. A dialog asks **"Did you release this message from your quarantine?"**
