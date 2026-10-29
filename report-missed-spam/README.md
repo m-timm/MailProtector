@@ -10,7 +10,7 @@ One ribbon button on any opened message. Click it and:
 2. Closing the dialog with the X also reports nothing.
 Before the question, the add-in reads the message's internet headers. If it has an `X-PHISHTEST` or
 `X-PHISHTEST-Curricula` header (list and wording in `phishTest` in `config.js`), the dialog says
-**Please use the "Report a Phish" button instead!** and nothing is reported. If the headers can't be
+**You caught a phishing simulation! Good Job! Please use the "Report a Phish" or "Phish Alert" button instead!** and nothing is reported. If the headers can't be
 read, the normal flow continues.
 
 Function command only, no task pane, `ReadItem` permission, Mailbox 1.9 requirement set.

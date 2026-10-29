@@ -39,7 +39,7 @@ const CONFIG = {
     enabled: true,
     headers: ["X-PHISHTEST", "X-PHISHTEST-Curricula"],
     title: "Report Missed Spam",
-    message: 'Please use the "Report a Phish" button instead!',
+    message: 'You caught a phishing simulation! Good Job! Please use the "Report a Phish" or "Phish Alert" button instead!',
     closeLabel: "Close",
   },
 
