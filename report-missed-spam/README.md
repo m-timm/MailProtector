@@ -38,6 +38,13 @@ read, the normal flow continues.
 
 Function command only, no task pane, `ReadItem` permission, Mailbox 1.9 requirement set.
 
+## Screenshots
+
+| 1. The question | 2. Yes: already quarantined | 3. Phishing simulation |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/dialog-quarantine-question.png" alt="Did you release this message from your quarantine?"> | <img src="docs/screenshots/dialog-already-quarantined.png" alt="Mailprotector already quarantined this message"> | <img src="docs/screenshots/dialog-phish-simulation.png" alt="You caught a phishing simulation"> |
+| **No** opens the report email | Nothing is reported | Redirects to Report a Phish / Phish Alert |
+
 ## Layout
 
 | Path | Purpose |
