@@ -32,6 +32,17 @@ const CONFIG = {
   // commands.js). Leave false for normal use.
   debug: false,
 
+  // Phishing-simulation check. If the message has any of these headers (case-insensitive) a dialog
+  // sends the user to the Report a Phish button and nothing is reported. Otherwise the normal flow
+  // continues. If the headers can't be read, the normal flow continues. Set enabled:false to skip.
+  phishTest: {
+    enabled: true,
+    headers: ["X-PHISHTEST", "X-PHISHTEST-Curricula"],
+    title: "Report Missed Spam",
+    message: 'Please use the "Report a Phish" button instead!',
+    closeLabel: "Close",
+  },
+
   // Question shown before the compose window opens. Set enabled:false to skip it.
   // Plain text only.
   quarantinePrompt: {

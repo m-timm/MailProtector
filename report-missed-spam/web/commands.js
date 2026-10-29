@@ -11,7 +11,7 @@
  */
 
 const NOTIFY_ID = "reportMissedSpam";
-const BUILD = "2026-10-27.3"; // shown in debug traces so you can tell which copy of this file Outlook is running
+const BUILD = "2026-10-29.1"; // shown in debug traces so you can tell which copy of this file Outlook is running
 const MAX_SUBJECT = 200;
 const DIALOG_OPEN_TIMEOUT_MS = 15000; // how long to wait for the dialog to open before giving up
 
@@ -73,7 +73,7 @@ function describe(result) {
  * If the dialog can't be opened we continue (fail open) so the button never goes dead.
  * Closing the dialog with the X stops without reporting.
  */
-function askQuarantine(item, done) {
+function askQuarantine(item, done, mode) {
   let finished = false;
   let openTimer = null;
   function finish(proceed) {
@@ -87,6 +87,7 @@ function askQuarantine(item, done) {
   try {
     const dialogUrl = new URL("dialog.html", window.location.href);
     dialogUrl.search = window.location.search || ""; // carries ?v=<version> so the dialog refreshes too
+    if (mode) dialogUrl.searchParams.set("mode", mode); // "phishtest" shows the Report a Phish message instead
     const url = dialogUrl.toString();
 
     // No response = no report. If the dialog never opens (e.g. the user ignores or closes the host's
@@ -94,7 +95,13 @@ function askQuarantine(item, done) {
     // skipped, and don't leave the "working on your request" banner hanging. Cleared once it opens.
     openTimer = setTimeout(function () {
       trace(item, "dlg", "dialog gave no answer in " + DIALOG_OPEN_TIMEOUT_MS / 1000 + "s");
-      notify(item, "informationalMessage", "Report cancelled because the question wasn't answered. Click Report Missed Spam to try again.");
+      notify(
+        item,
+        "informationalMessage",
+        mode === "phishtest" && CONFIG.phishTest && CONFIG.phishTest.message
+          ? CONFIG.phishTest.message
+          : "Report cancelled because the question wasn't answered. Click Report Missed Spam to try again."
+      );
       finish(false);
     }, DIALOG_OPEN_TIMEOUT_MS);
 
@@ -188,6 +195,49 @@ function openCompose(item, event) {
   }
 }
 
+/*
+ * Calls cb(true) if the message carries one of the CONFIG.phishTest.headers (phishing-simulation
+ * marker), otherwise cb(false). Any problem reading headers counts as "not a simulation" so the
+ * normal flow still works.
+ */
+function hasPhishTestHeader(item, cb) {
+  const pt = CONFIG.phishTest;
+  if (!pt || !pt.enabled || !pt.headers || !pt.headers.length || typeof item.getAllInternetHeadersAsync !== "function") {
+    cb(false);
+    return;
+  }
+  let answered = false;
+  function answer(found) {
+    if (answered) return;
+    answered = true;
+    cb(found);
+  }
+  try {
+    item.getAllInternetHeadersAsync(function (result) {
+      try {
+        if (result.status !== Office.AsyncResultStatus.Succeeded) {
+          trace(item, "hdr", "headers unavailable: " + describe(result));
+          answer(false);
+          return;
+        }
+        const text = String(result.value || "");
+        const found = pt.headers.some(function (name) {
+          const escaped = String(name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          return new RegExp("^" + escaped + "[ \\t]*:", "im").test(text);
+        });
+        trace(item, "hdr", "phish-test header found: " + found);
+        answer(found);
+      } catch (e) {
+        trace(item, "hdr", "header check threw: " + (e && e.message));
+        answer(false);
+      }
+    });
+  } catch (e) {
+    trace(item, "hdr", "header call threw: " + (e && e.message));
+    answer(false);
+  }
+}
+
 function reportMissedSpam(event) {
   const item = Office.context.mailbox.item;
   trace(item, "start", "button handler started");
@@ -202,6 +252,18 @@ function reportMissedSpam(event) {
     return;
   }
 
+  // Phishing-simulation messages must be reported with the Report a Phish button, not this one.
+  hasPhishTestHeader(item, function (isPhishTest) {
+    if (isPhishTest) {
+      trace(item, "dlg", "phish test message, showing redirect");
+      askQuarantine(item, function () { event.completed(); }, "phishtest");
+      return;
+    }
+    continueReport(item, event);
+  });
+}
+
+function continueReport(item, event) {
   const prompt = CONFIG.quarantinePrompt;
   if (!prompt || !prompt.enabled) {
     openCompose(item, event);

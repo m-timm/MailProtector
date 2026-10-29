@@ -41,7 +41,19 @@ function showQuarantined() {
   ]);
 }
 
+function showPhishTest() {
+  const p = CONFIG.phishTest;
+  document.getElementById("title").textContent = p.title || CONFIG.quarantinePrompt.title;
+  setScreen(p.message, [
+    { label: p.closeLabel || CONFIG.quarantinePrompt.closeLabel, primary: true, onClick: function () { send("close"); } },
+  ]);
+}
+
 Office.onReady(function () {
+  if (new URLSearchParams(window.location.search).get("mode") === "phishtest" && CONFIG.phishTest) {
+    showPhishTest();
+    return;
+  }
   document.getElementById("title").textContent = CONFIG.quarantinePrompt.title;
   showQuestion();
 });
