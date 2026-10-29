@@ -1,4 +1,21 @@
-# Report Missed Spam (Outlook add-in)
+<div align="center">
+
+<img src="web/assets/icon-128.png" alt="Report Missed Spam" width="112" height="112">
+
+# Report Missed Spam
+
+**One click in Outlook. One clean report to your email security team.**
+
+![Outlook](https://img.shields.io/badge/Outlook-new%20%7C%20classic%20%7C%20web-0078D4?logo=microsoftoutlook&logoColor=white)
+![Office Add-in](https://img.shields.io/badge/Office%20Add--in-Mailbox%201.9-2B579A)
+![Deploy](https://img.shields.io/badge/deploy-M365%20Integrated%20Apps-5E5E5E)
+![Made by](https://img.shields.io/badge/made%20by-TR%20Computer%20Sales-2E8B57)
+
+<sub>Outlook add-in &nbsp;·&nbsp; function command &nbsp;·&nbsp; no task pane &nbsp;·&nbsp; `ReadItem` only</sub>
+
+</div>
+
+---
 
 One ribbon button on any opened message. Click it and:
 
