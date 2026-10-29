@@ -25,6 +25,7 @@ One ribbon button on any opened message. Click it and:
    - **No**: a new compose window opens, addressed to `Spam@emailservice.io`, with the original message
      **attached as an item** (not forwarded) and a customizable body. The user reviews and clicks Send.
 2. Closing the dialog with the X also reports nothing.
+
 Before the question, the add-in reads the message's internet headers. If it has an `X-PHISHTEST` or
 `X-PHISHTEST-Curricula` header (list and wording in `phishTest` in `config.js`), the dialog says
 **You caught a phishing simulation! Good Job! Please use the "Report a Phish" or "Phish Alert" button instead!** and nothing is reported. If the headers can't be
