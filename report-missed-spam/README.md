@@ -130,3 +130,7 @@ and go straight to compose.
 - Item attachments need the message's EWS ID; a few contexts (some shared/delegate scenarios) don't
   provide one. The add-in shows an error notification instead of opening an empty compose window.
 - Mobile Outlook is not configured (desktop form factor only).
+
+## License
+
+MIT. See [the repository LICENSE](../LICENSE).
